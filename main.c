@@ -5,6 +5,7 @@
 
   1º Questão - 6:09 PM 26/08
   2º Questão - 8:12 PM 27/08
+  3º Questão - 11:24 PM 27/08
 
 
 */
@@ -18,6 +19,7 @@ void octal(int num);
 void hexa(int num);
 void bcd(int num);
 void complemento2(int num);
+void floatdouble(double num);
 
 int main(void) {
   int opc;
@@ -26,7 +28,8 @@ int main(void) {
   printf("[2] Decimal para Base 8\n");
   printf("[3] Decimal para Base 16\n");
   printf("[4] Decimal para Código BCD\n");
-  printf("[5] Base com sinal com 16 bits\n\n");
+  printf("[5] Decimal para Base com sinal com 16 bits\n");
+  printf("[6] Decimal real para binário com ponto flutuante e double\n\n");
   scanf("%d", &opc);
 
   if (opc == 1){
@@ -38,32 +41,34 @@ int main(void) {
     binario(num);
     main();
   } else if (opc == 2){
-    int result; 
     int num;
     printf("\nInsira um número para converter: ");
     scanf("%d", &num);
     octal(num);
     main();
   } else if (opc == 3){
-    int result; 
     int num;
     printf("\nInsira um número para converter: ");
     scanf("%d", &num);
     hexa(num);
     main();
   } else if (opc == 4){
-    int result; 
     int num;
     printf("\nInsira um número para converter: ");
     scanf("%d", &num);
     bcd(num);
     main();
   } else if (opc == 5){
-    int result; 
     int num;
     printf("\nInsira um número para converter: ");
     scanf("%d", &num);
     complemento2(num);
+    main();
+  } else if (opc == 6){ 
+    double num;
+    printf("\nInsira um número para converter: ");
+    scanf("%lf", &num);
+    floatdouble(num);
     main();
   }
   
@@ -192,6 +197,50 @@ void complemento2(int num) {
     printf("Número em complemento a 2: ");
     for (int k = 15; k >= 0; k--) {
         printf("%d", result[k]);
+    }
+    printf("\n");
+}
+
+void floatdouble(double numero) {
+    unsigned long long bits = 0;
+    unsigned char *byteptr = (unsigned char*)&numero;
+    
+    for (int i = 0; i < sizeof(double); i++) {
+        bits |= (unsigned long long)byteptr[i] << (8 * i);
+    }
+
+    unsigned long long integerpart = (unsigned long long)numero;
+    int algorismo = 0;
+    int flag = 0;
+
+    printf("Parte inteira em binário: ");
+    if (integerpart == 0) {
+        printf("0");
+        algorismo++;
+    } else {
+        for (int i = 63; i >= 0; i--) {
+            if (integerpart & (1ULL << i)) {
+                printf("1");
+                algorismo++;
+                flag = 1;
+            } else if (flag) {
+                printf("0");
+                algorismo++;
+            }
+        }
+    }
+    int bitsinal = (bits >> 63) & 1;
+    printf("Bit de sinal: %d\n", bitsinal);
+    printf("Exponente: %d\n", algorismo);
+
+    printf("Resultado da conversão (64 bits): ");
+    for (int i = 63; i >= 0; i--) {
+        printf("%c", (bits & (1ULL << i)) ? '1' : '0');
+    }
+    printf("\n");
+    printf("Conversão do fracionário: ");
+    for (int i = 51; i >= 0; i--) {
+        printf("%c", (bits & (1ULL << i)) ? '1' : '0');
     }
     printf("\n");
 }
